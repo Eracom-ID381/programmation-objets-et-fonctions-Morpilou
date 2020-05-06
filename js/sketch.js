@@ -7,11 +7,11 @@
 // let y = 50;
 // let diametre = 50
 
-// function setup() { 
+// function setup() {
 //   createCanvas(windowWidth, windowHeight);
 // }
 
-// function draw() { 
+// function draw() {
 //   background(0);
 //   ellipse(x, y, diametre, diametre)
 // }
@@ -35,10 +35,10 @@
 // function draw() {
 //   background(0);
 //   ellipse(cercle.x, cercle.y, cercle.diametre, cercle.diametre);
-    
+
 //   if (cercle.x > width - cercle.diametre / 2 || cercle.x  < cercle.diametre / 2) {
 //     cercle.vitesseX = -cercle.vitesseX;
-//   } else if (cercle.y > height - cercle.diametre / 2 || cercle.y < cercle.diametre / 2) { 
+//   } else if (cercle.y > height - cercle.diametre / 2 || cercle.y < cercle.diametre / 2) {
 //     cercle.vitesseY = -cercle.vitesseY;
 //   }
 
@@ -52,80 +52,102 @@
 // EXERCICE TECHNIQUE: RÉORGANISEZ CES VARIABLES AVEC DES OBJETS
 // ET RÉORGANISEZ LE FLUX DE VOTRE PROGRAMME AVEC VOS PROPRES FONCTION
 
-// let x1 = 0;
-// let y1 = 0;
-// let speedX1 = 10;
-// let speedY1 = 4;
-// let size1 = 50;
+let distance = 0;
+let hue;
+let ellipses = {
+  x1: 0,
+  x2: 0,
+  y1: 0,
+  y2: 0,
+  speedX1: 10,
+  speedX2: 5,
+  speedY1: 4,
+  speedY2: 10,
+  size1: 50,
+  size2: 50
+};
 
-// let x2 = 0;
-// let y2 = 0;
-// let speedX2 = 5;
-// let speedY2 = 10;
-// let size2 = 50;
 
-// let distance = 0;
-// let hue;
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  noStroke();
+  colorMode(HSB);
+}
 
-// function setup() {
-//   createCanvas(windowWidth, windowHeight);
-//   noStroke();
-//   colorMode(HSB);
-// }
+function draw() {
 
-// function draw() {
-//   background(hue, 255, 255);
+  let xDelta = Math.pow(ellipses.x2 - ellipses.x1, 2);
+  let yDelta = Math.pow(ellipses.y2 - ellipses.y1, 2);
+  let distance = sqrt(xDelta + yDelta);
+  hue = map(distance, 0, width, 0, 255);
+  background(hue, 255, 255);
 
-//   // DESSINER LES ELLIPSES
-//   fill(0);
-//   stroke(0);
-//   ellipse(x1, y1, size1, size1);
-//   ellipse(x2, y2, size2, size2);
+  // DESSINER LES ELLIPSES
+  ellipse_draw();
+  // FAIRE BOUGER LES ELLIPSES
+  ellipse_move();
+  // FAIRE REBONDIR LES ELLIPSES ET CHANGER DE BACKGROUND QUAND C'EST LE CAS
+  ellipse_bounce();
+  // DESSINER LA LIGNE ENTRE LES ELLIPSES
+  line_draw();
+  // DESSINER LE RECTANGLES
+  rect_draw(distance);
+  // DESSINER LE TEXTE
+  text_draw(distance);
 
-//   // FAIRE BOUGER LES ELLIPSES
-//   x1 = x1 + speedX1;
-//   x2 = x2 + speedX2;
-//   y1 = y1 + speedY1;
-//   y2 = y2 + speedY2;
+}
 
-//   // FAIRE REBONDIR LES ELLIPSES ET CHANGER DE BACKGROUND QUAND C'EST LE CAS
-//   if (x1 > width || x1 < 0) {
-//     speedX1 = -speedX1;
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 
-//   } else if (y1 > height - size1 / 2 || y1 < 0) { 
-//     speedY1 = -speedY1;
-//   }
+function ellipse_draw() {
+  fill(0);
+  stroke(0);
+  ellipse(ellipses.x1, ellipses.y1, ellipses.size1, ellipses.size1);
+  ellipse(ellipses.x2, ellipses.y2, ellipses.size2, ellipses.size2);
 
-//   if (x2 > width || x2 < 0) {
-//     speedX2 = -speedX2;
+}
 
-//   } else if (y2 > height - size2 /2 || y2 < 0) {
-//     speedY2 = -speedY2;
-//   }
+function ellipse_move() {
+  ellipses.x1 = ellipses.x1 + ellipses.speedX1;
+  ellipses.x2 = ellipses.x2 + ellipses.speedX2;
+  ellipses.y1 = ellipses.y1 + ellipses.speedY1;
+  ellipses.y2 = ellipses.y2 + ellipses.speedY2;
+}
 
-//   // CALCULER LA DISTANCE ENTRE LES DEUX ELLIPSES
-//   let xDelta = (x2 - x1) * (x2 - x1);
-//   let yDelta = (y2 - y1) * (y2 - y1);
-//   let distance = sqrt(xDelta + yDelta);
+function ellipse_bounce() {
+  if (ellipses.x1 > width || ellipses.x1 < 0) {
+    ellipses.speedX1 = -ellipses.speedX1;
 
-//   // DESSINER LA LIGNE ENTRE LES ELLIPSES
-//   strokeWeight(3);
-//   line(x1, y1, x2, y2);
+  } else if (ellipses.y1 > height - ellipses.size1 / 2 || ellipses.y1 < 0) {
+    ellipses.speedY1 = -ellipses.speedY1;
+  }
 
-//   // DESSINER LE RECTANGLES 
-//   hue = map(distance, 0, width, 0, 255);
-//   rectMode(CENTER);
-//   noFill();
-//   stroke(0);
-//   rect(width / 2, height / 2, distance, distance);  
+  if (ellipses.x2 > width || ellipses.x2 < 0) {
+    ellipses.speedX2 = -ellipses.speedX2;
 
-//   // DESSINER LE TEXTE
-//   textSize(83);
-//   fill(0);
-//   textAlign(CENTER, CENTER);
-//   text(int(distance), width / 2, height / 2);
-// }
+  } else if (ellipses.y2 > height - ellipses.size2 / 2 || ellipses.y2 < 0) {
+    ellipses.speedY2 = -ellipses.speedY2;
+  }
+}
 
-// function windowResized() {
-//   resizeCanvas(windowWidth, windowHeight);
-// }
+
+function line_draw() {
+  strokeWeight(3);
+  line(ellipses.x1, ellipses.y1, ellipses.x2, ellipses.y2);
+}
+
+function rect_draw(distance) {
+  rectMode(CENTER);
+  noFill();
+  stroke(0);
+  rect(width / 2, height / 2, distance, distance);
+}
+
+function text_draw(distance) {
+  textSize(83);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text(int(distance), width / 2, height / 2);
+}
